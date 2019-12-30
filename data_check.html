@@ -1,12 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>MySQL参数检测报告</title>
+    <meta charset="utf-8">
+    <title>MySQL参数检测报告</title>
 </head>
 <body>
-<h1>MySQL参数检测报告</h1>
-<p><i>驻云DBA组</i></p>
+
+
+
+<!-- CSS goes in the document HEAD or added to your external stylesheet -->
+<style type="text/css">
+table.gridtable {
+    font-family: verdana,arial,sans-serif;
+    font-size:11px;
+    color:#333333;
+    border-width: 1px;
+    border-color: #666666;
+    border-collapse: collapse;
+}
+table.gridtable th {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #666666;
+    background-color: #ffffff;
+}
+table.gridtable td {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #666666;
+    background-color: #ffffff;
+}
+</style>
+
+
+<h2>MySQL参数检测报告</h2>
 
 <pre>
 检测对象：{{ dbhostname }}
@@ -14,101 +43,253 @@
 检测结束时间：{{ current_time }}
 </pre>
 
+<p>1. 检查慢查询</p>
 
-<h2>MySQL参数检测报告</h2>
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_slowlog.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_slowlog.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 
-<p>1. 检查慢查询情况</p>
-<pre>
-{% for k,v in a.check_slowlog.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
 
 <p>2. 检查失败连接的比率</p>
-<pre>
-{% for k,v in a.check_ratio_aborterd_connections.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_ratio_aborterd_connections.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_ratio_aborterd_connections.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
+
 
 <p>3. 检查最大连接数占比</p>
-<pre>
-{% for k,v in a.check_ratio_max_connections.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_ratio_max_connections.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_ratio_max_connections.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <p>4. 检查binlog情况</p>
-<pre>
-{% for k,v in a.check_binlog.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_binlog.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_binlog.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 
 <p>5. 检查innodb情况</p>
-<pre>
-{% for k,v in a.check_innodb.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_binlog.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_binlog.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <p>6. 检查临时表使用情况</p>
-<pre>
-{% for k,v in a.check_table_scans.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_table_scans.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_table_scans.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <p>7. 检查open table的情况</p>
-<pre>
-{% for k,v in a.check_open_table.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_open_table.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_open_table.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <p>8. 检查进程使用情况</p>
-<pre>
-{% for k,v in a.check_threads.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_threads.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_threads.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <p>9. 检查查询缓存是否关闭</p>
-<pre>
-{% for k,v in a.check_query_cache_type.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_query_cache_type.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_query_cache_type.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <p>10. 检查排序缓存使用情况</p>
-<pre>
-{% for k,v in a.check_sort_buffer.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_sort_buffer.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_sort_buffer.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <p>11. 检查join缓存使用情况</p>
-<pre>
-{% for k,v in a.check_join_buffer_size.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
 
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_join_buffer_size.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_join_buffer_size.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <p>12. 检查打开的文件数情况</p>
-<pre>
-{% for k,v in a.check_open_files_limit.items() %}
-    {{ k }}:  {{ v }}
-{% endfor %}
-</pre>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        {% if a.check_open_files_limit.check_result == 1 %}
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        {% else %}
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        {% endif %}
+    </tr>
+
+    {% for k,v in a.check_open_files_limit.items() %}
+    <tr>
+        <td>{{ k }}</td>
+        <td>{{ v }}</td>
+    <tr>
+    {% endfor %}
+</table>
 
 <pre>The END</pre>
 
 
 </body>
-
-
 
 </html>

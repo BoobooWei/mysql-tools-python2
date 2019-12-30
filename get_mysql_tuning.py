@@ -16,6 +16,23 @@ def timestamp_toString(stamp):
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+# 自定义每一项的分数
+
+grades = {
+    'check_slowlog': 10,
+    'check_ratio_aborterd_connections': 5,
+    'check_ratio_max_connections': 10,
+    'check_binlog': 10,
+    'check_innodb': 10,
+    'check_table_scans': 10,
+    'check_open_table': 10,
+    'check_threads': 10,
+    'check_query_cache_type': 5,
+    'check_sort_buffer': 5,
+    'check_join_buffer_size': 5,
+    'check_open_files_limit': 10,
+}
+
 
 class Get_mysql_tuning():
     def __init__(self):
@@ -47,7 +64,8 @@ class Get_mysql_tuning():
         :param Descreption: 描述
         :param Reference: 帮助链接
         :param Solution: 解决建议
-        :param result: 检查项种涉及到的变量和状态值
+        :param result: 检查项种涉及到的变量和状态值 result['grade'] 得分
+        :param result['check_result']: 通过检测1 未通过0
         :return: 返回有序字典OrderedDict
         """
         a = OrderedDict()
@@ -137,6 +155,8 @@ class Get_mysql_tuning():
         result['Percentage , Aborted connections ratio'] = Aborted_connects_ratio
 
         if Aborted_connects_ratio > 0.1:
+            result['check_result'] = 0
+            result['grade'] = 0
             Issue = "存在大量失败连接"
             Description = "存在超过10%的失败连接，这个警报发现了大量与数据库的中断连接。"
             Reference = "http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#option_mysqld_wait_timeout"
@@ -144,6 +164,8 @@ class Get_mysql_tuning():
             return self.print_check(Issue=Issue, Category=Category, Description=Description, Reference=Reference,
                                     Solution=Solution, result=result)
         else:
+            result['check_result'] = 1
+            result['grade'] = grades['check_ratio_aborterd_connections']
             Issue = "失败连接比率正常"
             return self.print_check(Issue=Issue, Category=Category)
 
@@ -166,6 +188,8 @@ class Get_mysql_tuning():
         result['Percentagte, The number of used connections is'] = connections_ratio
 
         if connections_ratio > 0.85:
+            result['check_result'] = 0
+            result['grade'] = 0
             Issue = "最大连接数配置有问题。(max_connections = {0})".format(max_connect_R)
             Description = "服务器连接配置需要进行优化"
             Reference = "http://dev.mysql.com/doc/refman/5.7/en/too-many-connections.html "
@@ -173,6 +197,8 @@ class Get_mysql_tuning():
             return self.print_check(Issue=Issue, Category=Category, Description=Description, Reference=Reference,
                                     Solution=Solution, result=result)
         else:
+            result['check_result'] = 1
+            result['grade'] = grades['check_ratio_max_connections']
             Issue = '最大连接数配置正常'
             return self.print_check(Issue=Issue, Category=Category, result=result)
 
@@ -203,6 +229,8 @@ class Get_mysql_tuning():
         if slow_query_log == 'ON':
 
             if slow_query_ratio > 0.1:
+                result['check_result'] = 0
+                result['grade'] = 0
                 Issue = '慢查询占比较高'
                 Description = "慢查询较多需要优化"
                 Reference = "https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#statvar_Slow_queries "
@@ -210,9 +238,13 @@ class Get_mysql_tuning():
                 return self.print_check(Issue=Issue, Category=Category, Description=Description, Reference=Reference,
                                         Solution=Solution, result=result)
             else:
+                result['check_result'] = 1
+                result['grade'] = grades['check_slowlog']
                 Issue = '慢查询占比不高'
                 return self.print_check(Issue=Issue, Category=Category, result=result)
         else:
+            result['check_result'] = 0
+            result['grade'] = 0
             Issue = '没有开启慢查询'
             Description = "慢查询日志需要开启"
             Reference = "https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#statvar_Slow_queries "
@@ -238,12 +270,21 @@ class Get_mysql_tuning():
 
         if log_bin == 'ON':
             Issue_list = []
+            result['grade'] = grades['check_binlog']
             if binlog_format != 'ROW':
                 Issue_list.append('二进制日志格式为ROW；')
+                result['grade'] = grades['check_binlog'] - 4
+                result['check_result'] = 0
             elif int(sync_binlog) != 1:
                 Issue_list.append('sync binlog值不是 1；')
+                result['grade'] = grades['check_binlog'] - 2
+                result['check_result'] = 0
             elif int(expire_logs_days) == 0:
                 Issue_list.append('二进制日志自动清理阈值expire_log_days应该大于0')
+                result['grade'] = grades['check_binlog'] - 4
+                result['check_result'] = 0
+            else:
+                result['check_result'] = 1
             Issue = ' '.join(Issue_list)
             Description = "二进制日志格式应该设为ROW ；二进制日志建议在每次写入时被同步到磁盘上； 二进制日志自动清理阈值expire_log_days应该大于0 "
             Reference = "http://dev.mysql.com/doc/refman/5.7/en/binary-log.html"
@@ -251,6 +292,8 @@ class Get_mysql_tuning():
             return self.print_check(Issue=Issue, Category=Category, Description=Description, Reference=Reference,
                                     Solution=Solution, result=result)
         else:
+            result['check_result'] = 0
+            result['grade'] = 0
             Issue_list = ['二进制日志没有开启；']
             if binlog_format != 'ROW':
                 Issue_list.append('二进制日志格式为ROW；')
@@ -284,9 +327,13 @@ class Get_mysql_tuning():
         result['innodb_lock_wait_timeout'] = innodb_lock_wait_timeout
 
         if int(innodb_flush_log_at_trx_commit) == 1 and innodb_doublewrite == 'ON':
+            result['check_result'] = 1
             Issue = 'innodb配置良好'
+            result['grade'] = grades['check_innodb']
         else:
+            result['check_result'] = 0
             Issue = '请检查innodb的相关配置'
+            result['grade'] = 0
         return self.print_check(Issue=Issue, Category=Category, result=result)
 
     def check_table_scans(self):
@@ -313,10 +360,14 @@ class Get_mysql_tuning():
         result['tmp_table_raito'] = tmp_table_raito
 
         if tmp_table_raito <= 0.25:
+            result['check_result'] = 1
             Issue = '临时表使用情况良好'
+            result['grade'] = grades['check_table_scans']
             return self.print_check(Issue=Issue, Category=Category, result=result)
         else:
+            result['check_result'] = 0
             Issue = '临时表配置需要优化'
+            result['grade'] = 0
             Description = "比较理想的配置是：Created_tmp_disk_tables / Created_tmp_tables * 100% <= 25%。"
             Reference = "https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#statvar_Created_tmp_disk_tables"
             Solution = "在优化查询语句时，避免使用临时表，如果无法避免，请确保这些临时表在内存中。"
@@ -343,16 +394,21 @@ class Get_mysql_tuning():
         result['table_cache_fill'] = '{0:.1}'.format(table_cache_fill)
 
         if table_cache_fill < 0.95:
+            result['check_result'] = 1
             Issue = '表缓存配置正常'
+            result['grade'] = grades['check_open_table']
             return self.print_check(Issue=Issue, Category=Category, result=result)
         elif table_cache_hit_rate <= 0.85:
+            result['check_result'] = 0
             Issue = '表缓存配置不正常'
+            result['grade'] = 0
             Reference = "https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#table__open_cache"
             Description = "打开表的数量/打开过的表数量 应该大于等于0.95 ，打开表的数量/表缓存 应该小于等于 0.85"
             Solution = "您可能需要提高table_open_cache配置。"
             return self.print_check(Issue=Issue, Category=Category, Description=Description, Reference=Reference,
                                     Solution=Solution, result=result)
         else:
+            result['check_result'] = 1
             Issue = '表缓存配置正常'
             return self.print_check(Issue=Issue, Category=Category, result=result)
 
@@ -377,14 +433,18 @@ class Get_mysql_tuning():
         result['current_threads_per_sec'] = current_threads_per_sec
 
         if (historic_threads_per_sec >= 2 or current_threads_per_sec >= 2) and Threads_cached <= 1:
+            result['check_result'] = 0
             Issue = "线程缓存数thread_cache_size配置不合理"
+            result['grade'] = 0
             Reference = "https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#thread_cache_size"
             Description = "您应该提高thread_cache_size。"
             Solution = "您应该增加thread_cache_size。默认值基于以下公式，上限为100:[8 + (max_connections / 100)]。"
             return self.print_check(Issue=Issue, Category=Category, Description=Description, Reference=Reference,
                                     Solution=Solution, result=result)
         else:
+            result['check_result'] = 1
             Issue = "线程缓存数thread_cache_size配置正常"
+            result['grade'] = grades['check_threads']
             return self.print_check(Issue=Issue, Category=Category, result=result)
 
     def check_query_cache_type(self):
@@ -397,10 +457,14 @@ class Get_mysql_tuning():
         result = OrderedDict()
         result['query_cache_type'] = query_cache_type
         if query_cache_type == 'OFF':
+            result['check_result'] = 1
             Issue = '查询缓冲已关闭'
+            result['grade'] = grades['check_query_cache_type']
             return self.print_check(Issue=Issue, Category=Category, result=result)
         else:
+            result['check_result'] = 0
             Issue = '查询缓冲仍然开启'
+            result['grade'] = 0
             Description = '关闭查询缓冲后不会缓存结果或从查询缓存中检索结果。'
             Reference = 'http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#option_mysqld_query_cache_size'
             Solution = "您目前还没有释放查询缓存缓冲区，您应该将query_cache_size设置为0。"
@@ -434,14 +498,18 @@ class Get_mysql_tuning():
         result['passes_per_sort'] = passes_per_sort
 
         if passes_per_sort >= 2:
+            result['check_result'] = 0
             Issue = "排序缓存配置不合理"
+            result['grade'] = 0
             Reference = "https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#sort_buffer_size"
             Description = "排序缓冲区的分配比所需的值更大。"
             Solution = "您应该提高sort_buffer_size，还应该提高read_rnd_buffer_size。"
             return self.print_check(Issue=Issue, Category=Category, Description=Description, Reference=Reference,
                                     Solution=Solution, result=result)
         else:
+            result['check_result'] = 1
             Issue = "排序缓存配置正常"
+            result['grade'] = grades['check_sort_buffer']
             return self.print_check(Issue=Issue, Category=Category, result=result)
 
     def check_join_buffer_size(self):
@@ -461,10 +529,14 @@ class Get_mysql_tuning():
         result['join_buffer_size'] = self.human(join_buffer_size)
 
         if Select_range_check == '0' and Select_full_join == '0':
+            result['check_result'] = 1
             Issue = "您的连接似乎正确地使用了索引。"
+            result['grade'] = grades['check_join_buffer_size']
             return self.print_check(Issue=Issue, Category=Category, result=result)
         else:
+            result['check_result'] = 0
             Issue = "您的连接似乎没有正确地使用索引。"
+            result['grade'] = 0
             Reference = "https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#sort_buffer_size"
             Description = "您已经有{0}个join，没有使用索引导致需要全表扫描。".format(Select_range_check)
             Solution = "您可以开启log-queries-not-using-indexes参数，然后在慢速查询日志中查找非索引join语句。如果您无法优化您的查询，您可能希望增加您的join_buffer_size，以容纳更大的连接。"
@@ -486,6 +558,8 @@ class Get_mysql_tuning():
         result['open_files_ratio'] = open_files_ratio
 
         if open_files_ratio >= 0.75:
+            result['check_result'] = 0
+            result['grade'] = 0
             Issue = "open_files_limit参数设置需要优化"
             Reference = "https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#open_files_limit"
             Description = "目前开启的文件数已经超过了最大文件数限制的75%。"
@@ -493,7 +567,9 @@ class Get_mysql_tuning():
             return self.print_check(Issue=Issue, Category=Category, Description=Description, Reference=Reference,
                                     Solution=Solution, result=result)
         else:
+            result['check_result'] = 1
             Issue = "open_files_limit配置正常。"
+            result['grade'] = grades['check_open_files_limit']
             return self.print_check(Issue=Issue, Category=Category, result=result)
 
     def one(self, items):
@@ -551,7 +627,9 @@ class GetReport:
             return template.render(**render_data)
 
     def maker(self, template_dir, output_file_dir):
-        with codecs.open(output_file_dir + '/' + 'MySQL参数检测报告_{0}.html'.format(timestamp_toString(time.time())), 'w', 'utf-8') as f:
+        # with codecs.open(output_file_dir + '/' + 'MySQL参数检测报告_{0}.html'.format(timestamp_toString(time.time())), 'w',
+        with codecs.open(output_file_dir + '/' + 'MySQL参数检测报告_test.html'.format(timestamp_toString(time.time())), 'w',
+                         'utf-8') as f:
             f.write(self.render_template(template_dir))
 
 
@@ -559,19 +637,19 @@ if __name__ == '__main__':
     get = Get_mysql_tuning()
     result = get.get_mysql_tuning()
 
-    with open('./report/MySQL参数检测报告_{0}.txt'.format(timestamp_toString(time.time())), 'w') as f:
-        for k, v in result.iteritems():
-            print '---' + k
-            f.write('---' + k + '\n')
-            if 'report' in k:
-                print v
-                f.write(v + '\n')
-            else:
-                for a, b in v.iteritems():
-                    print a + ' : ' + str(b)
-                    f.write(a + ' : ' + str(b) + '\n')
-            print
-            f.write('\n')
+    # with open('./report/MySQL参数检测报告_{0}.txt'.format(timestamp_toString(time.time())), 'w') as f:
+    #     for k, v in result.iteritems():
+    #         print '---' + k
+    #         f.write('---' + k + '\n')
+    #         if 'report' in k:
+    #             print v
+    #             f.write(v + '\n')
+    #         else:
+    #             for a, b in v.iteritems():
+    #                 print a + ' : ' + str(b)
+    #                 f.write(a + ' : ' + str(b) + '\n')
+    #         print
+    #         f.write('\n')
 
     print("output html file")
 

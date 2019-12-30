@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MySQL参数检测报告</title>
+</head>
+<body>
+
+
+
+<!-- CSS goes in the document HEAD or added to your external stylesheet -->
+<style type="text/css">
+table.gridtable {
+    font-family: verdana,arial,sans-serif;
+    font-size:11px;
+    color:#333333;
+    border-width: 1px;
+    border-color: #666666;
+    border-collapse: collapse;
+}
+table.gridtable th {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #666666;
+    background-color: #ffffff;
+}
+table.gridtable td {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #666666;
+    background-color: #ffffff;
+}
+</style>
+
+
+<h2>MySQL参数检测报告</h2>
+
+<pre>
+检测对象：TestDB
+检测开始时间：2019-12-30 11:00:36
+检测结束时间：2019-12-30 11:00:36
+</pre>
+
+<p>1. 检查慢查询</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>long_query_time</td>
+        <td>1.000000</td>
+    <tr>
+    
+    <tr>
+        <td>slow_query_log</td>
+        <td>ON</td>
+    <tr>
+    
+    <tr>
+        <td>slow_query_log_file</td>
+        <td>/yunwei8/mysql/slow.log</td>
+    <tr>
+    
+    <tr>
+        <td>min_examined_row_limit</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>log_queries_not_using_indexes</td>
+        <td>ON</td>
+    <tr>
+    
+    <tr>
+        <td>slow_queries</td>
+        <td>3658554</td>
+    <tr>
+    
+    <tr>
+        <td>slow_query_ratio</td>
+        <td>0.09</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>1</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>10</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>慢查询占比不高</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查慢查询</td>
+    <tr>
+    
+</table>
+
+
+
+<p>2. 检查失败连接的比率</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>Total connections</td>
+        <td>36387</td>
+    <tr>
+    
+    <tr>
+        <td>Total aborted connections</td>
+        <td>4743</td>
+    <tr>
+    
+    <tr>
+        <td>Percentage , Aborted connections ratio</td>
+        <td>0.13</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>存在大量失败连接</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查失败连接的比率</td>
+    <tr>
+    
+    <tr>
+        <td>Description</td>
+        <td>存在超过10%的失败连接，这个警报发现了大量与数据库的中断连接。</td>
+    <tr>
+    
+    <tr>
+        <td>Reference</td>
+        <td>http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#option_mysqld_wait_timeout</td>
+    <tr>
+    
+    <tr>
+        <td>Solution</td>
+        <td>造成这种情况的一个常见原因是，由于连接超时到达，应用程序或锁定的表之间的连接被不正确地关闭，导致随后的连接中断。这个警告建议审核您的代码，以便正确关闭连接，或者在一个临时环境中测试正在测试的查询，以监视锁定的表。</td>
+    <tr>
+    
+</table>
+
+
+<p>3. 检查最大连接数占比</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>Current max_connections</td>
+        <td>151</td>
+    <tr>
+    
+    <tr>
+        <td>Current Threads_connected</td>
+        <td>111</td>
+    <tr>
+    
+    <tr>
+        <td>Historic Max_used_connections</td>
+        <td>152</td>
+    <tr>
+    
+    <tr>
+        <td>Percentagte, The number of used connections is</td>
+        <td>1.01</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>最大连接数配置有问题。(max_connections = 190.0)</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查最大连接数占比</td>
+    <tr>
+    
+    <tr>
+        <td>Description</td>
+        <td>服务器连接配置需要进行优化</td>
+    <tr>
+    
+    <tr>
+        <td>Reference</td>
+        <td>http://dev.mysql.com/doc/refman/5.7/en/too-many-connections.html </td>
+    <tr>
+    
+    <tr>
+        <td>Solution</td>
+        <td>更改max_connections的值，以实现85%的最大利用率。请记住，增加连接数量将增加每个线程缓冲区使用的RAM的数量。</td>
+    <tr>
+    
+</table>
+
+<p>4. 检查binlog情况</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>log_bin</td>
+        <td>ON</td>
+    <tr>
+    
+    <tr>
+        <td>binlog_format</td>
+        <td>STATEMENT</td>
+    <tr>
+    
+    <tr>
+        <td>sync_binlog</td>
+        <td>1</td>
+    <tr>
+    
+    <tr>
+        <td>expire_logs_days</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>6</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>二进制日志格式为ROW；</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查二进制日志</td>
+    <tr>
+    
+    <tr>
+        <td>Description</td>
+        <td>二进制日志格式应该设为ROW ；二进制日志建议在每次写入时被同步到磁盘上； 二进制日志自动清理阈值expire_log_days应该大于0 </td>
+    <tr>
+    
+    <tr>
+        <td>Reference</td>
+        <td>http://dev.mysql.com/doc/refman/5.7/en/binary-log.html</td>
+    <tr>
+    
+    <tr>
+        <td>Solution</td>
+        <td>您需要修改配置文件，添加或修改二进制日志的相关参数。</td>
+    <tr>
+    
+</table>
+
+
+<p>5. 检查innodb情况</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>log_bin</td>
+        <td>ON</td>
+    <tr>
+    
+    <tr>
+        <td>binlog_format</td>
+        <td>STATEMENT</td>
+    <tr>
+    
+    <tr>
+        <td>sync_binlog</td>
+        <td>1</td>
+    <tr>
+    
+    <tr>
+        <td>expire_logs_days</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>6</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>二进制日志格式为ROW；</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查二进制日志</td>
+    <tr>
+    
+    <tr>
+        <td>Description</td>
+        <td>二进制日志格式应该设为ROW ；二进制日志建议在每次写入时被同步到磁盘上； 二进制日志自动清理阈值expire_log_days应该大于0 </td>
+    <tr>
+    
+    <tr>
+        <td>Reference</td>
+        <td>http://dev.mysql.com/doc/refman/5.7/en/binary-log.html</td>
+    <tr>
+    
+    <tr>
+        <td>Solution</td>
+        <td>您需要修改配置文件，添加或修改二进制日志的相关参数。</td>
+    <tr>
+    
+</table>
+
+<p>6. 检查临时表使用情况</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>real_tmp_table_size</td>
+        <td>16777216</td>
+    <tr>
+    
+    <tr>
+        <td>Created_tmp_disk_tables</td>
+        <td>250141</td>
+    <tr>
+    
+    <tr>
+        <td>Created_tmp_files</td>
+        <td>279927</td>
+    <tr>
+    
+    <tr>
+        <td>Created_tmp_tables</td>
+        <td>4770980</td>
+    <tr>
+    
+    <tr>
+        <td>tmp_table_raito</td>
+        <td>0.05</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>临时表配置需要优化</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查临时表使用情况</td>
+    <tr>
+    
+    <tr>
+        <td>Description</td>
+        <td>比较理想的配置是：Created_tmp_disk_tables / Created_tmp_tables * 100% <= 25%。</td>
+    <tr>
+    
+    <tr>
+        <td>Reference</td>
+        <td>https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#statvar_Created_tmp_disk_tables</td>
+    <tr>
+    
+    <tr>
+        <td>Solution</td>
+        <td>在优化查询语句时，避免使用临时表，如果无法避免，请确保这些临时表在内存中。</td>
+    <tr>
+    
+</table>
+
+<p>7. 检查open table的情况</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>table_open_cache</td>
+        <td>512</td>
+    <tr>
+    
+    <tr>
+        <td>Open_tables</td>
+        <td>512</td>
+    <tr>
+    
+    <tr>
+        <td>Opened_tables</td>
+        <td>10922</td>
+    <tr>
+    
+    <tr>
+        <td>table_cache_hit_rate</td>
+        <td>0.05</td>
+    <tr>
+    
+    <tr>
+        <td>table_cache_fill</td>
+        <td>1e+00</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>表缓存配置不正常</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查open table的情况</td>
+    <tr>
+    
+    <tr>
+        <td>Description</td>
+        <td>打开表的数量/打开过的表数量 应该大于等于0.95 ，打开表的数量/表缓存 应该小于等于 0.85</td>
+    <tr>
+    
+    <tr>
+        <td>Reference</td>
+        <td>https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#table__open_cache</td>
+    <tr>
+    
+    <tr>
+        <td>Solution</td>
+        <td>您可能需要提高table_open_cache配置。</td>
+    <tr>
+    
+</table>
+
+<p>8. 检查进程使用情况</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>thread_cache_size</td>
+        <td>8</td>
+    <tr>
+    
+    <tr>
+        <td>Threads_created</td>
+        <td>3419</td>
+    <tr>
+    
+    <tr>
+        <td>Threads_cached</td>
+        <td>2</td>
+    <tr>
+    
+    <tr>
+        <td>historic_threads_per_sec</td>
+        <td>0.0031</td>
+    <tr>
+    
+    <tr>
+        <td>current_threads_per_sec</td>
+        <td>0.0</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>1</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>10</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>线程缓存数thread_cache_size配置正常</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查线程缓冲</td>
+    <tr>
+    
+</table>
+
+<p>9. 检查查询缓存是否关闭</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>query_cache_type</td>
+        <td>OFF</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>1</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>5</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>查询缓冲已关闭</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查查询缓存是否关闭</td>
+    <tr>
+    
+</table>
+
+<p>10. 检查排序缓存使用情况</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>sort_buffer_size</td>
+        <td>2M</td>
+    <tr>
+    
+    <tr>
+        <td>read_rnd_buffer_size</td>
+        <td>8M</td>
+    <tr>
+    
+    <tr>
+        <td>Sort_merge_passes</td>
+        <td>140121</td>
+    <tr>
+    
+    <tr>
+        <td>Sort_scan</td>
+        <td>1528521</td>
+    <tr>
+    
+    <tr>
+        <td>Sort_range</td>
+        <td>339542</td>
+    <tr>
+    
+    <tr>
+        <td>total_sorts</td>
+        <td>1868063</td>
+    <tr>
+    
+    <tr>
+        <td>passes_per_sort</td>
+        <td>0.075</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>1</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>5</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>排序缓存配置正常</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查排序缓冲</td>
+    <tr>
+    
+</table>
+
+<p>11. 检查join缓存使用情况</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(255, 75, 60);"> 未通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>Select_full_join</td>
+        <td>181629</td>
+    <tr>
+    
+    <tr>
+        <td>Select_range_check</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>join_buffer_size</td>
+        <td>260K</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>0</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>您的连接似乎没有正确地使用索引。</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查join缓存使用情况</td>
+    <tr>
+    
+    <tr>
+        <td>Description</td>
+        <td>您已经有0个join，没有使用索引导致需要全表扫描。</td>
+    <tr>
+    
+    <tr>
+        <td>Reference</td>
+        <td>https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#sort_buffer_size</td>
+    <tr>
+    
+    <tr>
+        <td>Solution</td>
+        <td>您可以开启log-queries-not-using-indexes参数，然后在慢速查询日志中查找非索引join语句。如果您无法优化您的查询，您可能希望增加您的join_buffer_size，以容纳更大的连接。</td>
+    <tr>
+    
+</table>
+
+<p>12. 检查打开的文件数情况</p>
+
+<table class="gridtable">
+    <tr>
+        <th> 检查结果 </th>
+        
+            <th> <span style="color: rgb(72,170,60);"> 通过 </span> </th>
+        
+    </tr>
+
+    
+    <tr>
+        <td>open_files_limit</td>
+        <td>65535</td>
+    <tr>
+    
+    <tr>
+        <td>Open_files</td>
+        <td>41</td>
+    <tr>
+    
+    <tr>
+        <td>open_files_ratio</td>
+        <td>0.0006</td>
+    <tr>
+    
+    <tr>
+        <td>check_result</td>
+        <td>1</td>
+    <tr>
+    
+    <tr>
+        <td>grade</td>
+        <td>10</td>
+    <tr>
+    
+    <tr>
+        <td>Issue</td>
+        <td>open_files_limit配置正常。</td>
+    <tr>
+    
+    <tr>
+        <td>Category</td>
+        <td>检查打开的文件数情况</td>
+    <tr>
+    
+</table>
+
+<pre>The END</pre>
+
+
+</body>
+
+</html>
