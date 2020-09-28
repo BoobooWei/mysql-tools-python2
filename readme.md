@@ -10,3 +10,12 @@
 
 在获取到`mysql_global_status.sql`和`mysql_global_variables.sql`后，通过python脚本在我们本地进行数据库性能诊断。
 
+
+```bash
+# 前提已经按照上面的帮助获取到数据库的全局参数配置和全局状态值，并将文件覆盖当前目录中的 *.sql 文件。
+# Python2.7 的环境运行检测脚本
+python get_mysql_tuning.py
+# 运行后，在report目录中会生成相应的报告
+
+```
+
