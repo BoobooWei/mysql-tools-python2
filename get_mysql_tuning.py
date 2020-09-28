@@ -8,6 +8,9 @@ from collections import OrderedDict
 import sys
 import time
 
+# 3rd-part Modules
+import argparse
+
 
 def timestamp_toString(stamp):
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(stamp))
@@ -633,37 +636,32 @@ class GetReport:
             f.write(self.render_template(template_dir))
 
 
-if __name__ == '__main__':
-    get = Get_mysql_tuning()
-    result = get.get_mysql_tuning()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='''MySQL参数检测报告小工具
+    Example：
+    python get_mysql_tuning.py --VariablesFile mysql_global_variables.sql --StatusFile mysql_global_status.sql
+    ''', formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument("--VariablesFile", help="全局参数配置 必要参数")
+    parser.add_argument("--StatusFile", help="全局状态值 非必要参数")
 
-    # with open('./report/MySQL参数检测报告_{0}.txt'.format(timestamp_toString(time.time())), 'w') as f:
-    #     for k, v in result.iteritems():
-    #         print '---' + k
-    #         f.write('---' + k + '\n')
-    #         if 'report' in k:
-    #             print v
-    #             f.write(v + '\n')
-    #         else:
-    #             for a, b in v.iteritems():
-    #                 print a + ' : ' + str(b)
-    #                 f.write(a + ' : ' + str(b) + '\n')
-    #         print
-    #         f.write('\n')
+    args = parser.parse_args()
 
-    print("output html file")
+    if args.VariablesFile and args.StatusFile:
+        get = Get_mysql_tuning()
+        result = get.get_mysql_tuning()
 
-    now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-    current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+        now_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
 
-    params = {
-        'a': result,
-        "dbhostname": "TestDB",
-        "now_time": now_time,
-        "current_time": current_time
-    }
+        params = {
+            'a': result,
+            "dbhostname": "TestDB",
+            "now_time": now_time,
+            "current_time": current_time
+        }
 
-    api = GetReport(**params)
-    template_dir = "./"
-    output_file_dir = "./report"
-    api.maker(template_dir, output_file_dir)
+        api = GetReport(**params)
+        template_dir = "./"
+        output_file_dir = "./report"
+        api.maker(template_dir, output_file_dir)
+        print("MySQL 参数报告生成成功，请访问 report 目录查看。")

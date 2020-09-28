@@ -1,6 +1,6 @@
 import json
 myv = {}
-for line in open('mysql_global_variables.sql').readlines():
+for line in open('../mysql_global_variables.sql').readlines():
 
     line_list = map(lambda x: x.strip('"'), line.strip().split(',')[:2])
     if len(line_list) == 1:
@@ -13,7 +13,7 @@ for line in open('mysql_global_variables.sql').readlines():
 # print(json.dumps(myv, indent=2))
 
 mys = {}
-for line in open('mysql_global_status.sql').readlines():
+for line in open('../mysql_global_status.sql').readlines():
     line_list = map(lambda x: x.strip('"'), line.strip().split(',')[:2])
     if len(line_list) == 1:
         key = line_list[0]
